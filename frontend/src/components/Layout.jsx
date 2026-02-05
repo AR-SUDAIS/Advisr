@@ -1,8 +1,9 @@
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, MessageSquare, GraduationCap, LogOut, Menu } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 const SidebarItem = ({ icon: Icon, label, to, active }) => (
     <Link
@@ -30,6 +31,13 @@ const SidebarItem = ({ icon: Icon, label, to, active }) => (
 
 const Layout = () => {
     const location = useLocation();
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
 
     return (
         <div className="flex h-screen bg-[#0f172a] text-slate-100 overflow-hidden font-sans">
@@ -53,14 +61,14 @@ const Layout = () => {
                     />
                     <SidebarItem
                         icon={MessageSquare}
-                        label="AI Mentor"
+                        label="Chat"
                         to="/chat"
                         active={location.pathname === '/chat'}
                     />
                 </nav>
 
                 <div className="pt-6 border-t border-slate-800">
-                    <button className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-slate-400 hover:bg-slate-800 hover:text-red-400 transition-colors">
+                    <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-slate-400 hover:bg-slate-800 hover:text-red-400 transition-colors">
                         <LogOut size={20} />
                         <span className="font-medium">Sign Out</span>
                     </button>
