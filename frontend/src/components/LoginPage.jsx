@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { GraduationCap, Mail, Lock, Loader2, ArrowRight } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -114,7 +114,7 @@ const LoginPage = () => {
 
                 <div className="mt-8 text-center text-sm text-slate-400">
                     Don't have an account?{' '}
-                    <a href="#" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">Create account</a>
+                    <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">Create account</Link>
                 </div>
             </motion.div>
         </div>

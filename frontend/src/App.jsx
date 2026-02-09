@@ -6,6 +6,7 @@ import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import Chatbot from './components/Chatbot';
 import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/" element={
             <ProtectedRoute>
               <Layout />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { BookOpen, TrendingUp, Award, Clock } from 'lucide-react';
 
@@ -30,8 +31,8 @@ const CourseCard = ({ code, name, credit, status }) => (
             </div>
         </div>
         <span className={`px-3 py-1 rounded-full text-xs font-medium border ${status === 'Ongoing'
-                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
-                : 'bg-slate-700 text-slate-400 border-slate-600'
+            ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+            : 'bg-slate-700 text-slate-400 border-slate-600'
             }`}>
             {status}
         </span>
@@ -39,12 +40,14 @@ const CourseCard = ({ code, name, credit, status }) => (
 );
 
 const Dashboard = () => {
+    const { user } = useAuth();
+
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Welcome back, Abdul Rahman Sudais 👋</h1>
-                    <p className="text-slate-400">Here's your academic overview for Semester 6.</p>
+                    <h1 className="text-3xl font-bold text-white mb-2">Welcome back, {user?.name || 'Student'} 👋</h1>
+                    <p className="text-slate-400">Here's your academic overview for Semester {user?.current_semester || 1}.</p>
                 </div>
                 <div className="text-right hidden sm:block">
                     <p className="text-sm text-slate-500">Program</p>

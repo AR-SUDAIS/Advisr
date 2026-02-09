@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Send, Bot, User, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../lib/utils';
+import api from '../lib/api';
 
 const ChatMessage = ({ role, content }) => {
     const isBot = role === 'assistant';
@@ -59,15 +60,19 @@ const Chatbot = () => {
         setInput('');
         setIsLoading(true);
 
-        // Mock Response delay
-        setTimeout(() => {
+        try {
+            const response = await api.post('/chat', { message: input });
             const botResponse = {
                 role: 'assistant',
-                content: "I'm currently running in demo mode. Once connected to the backend, I'll use RAG to fetch specific advice based on your grades and courses!"
+                content: response.data.response
             };
             setMessages(prev => [...prev, botResponse]);
+        } catch (error) {
+            console.error("Chat error:", error);
+            setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I'm having trouble connecting to the server." }]);
+        } finally {
             setIsLoading(false);
-        }, 1000);
+        }
     };
 
     return (
