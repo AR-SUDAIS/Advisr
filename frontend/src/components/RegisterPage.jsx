@@ -9,7 +9,6 @@ const RegisterPage = () => {
         name: '',
         reg_no: '',
         email: '',
-        current_semester: 1,
         password: ''
     });
     const [error, setError] = useState('');
@@ -26,11 +25,7 @@ const RegisterPage = () => {
         setError('');
         setIsLoading(true);
         try {
-            // Convert semester to int
-            await register({
-                ...formData,
-                current_semester: parseInt(formData.current_semester)
-            });
+            await register(formData);
             // Redirect to login after successful registration
             navigate('/login');
         } catch (err) {
@@ -119,22 +114,7 @@ const RegisterPage = () => {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-300 ml-1">Current Semester</label>
-                        <div className="relative group">
-                            <BookOpen className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-500 transition-colors" size={20} />
-                            <input
-                                type="number"
-                                name="current_semester"
-                                min="1"
-                                max="8"
-                                value={formData.current_semester}
-                                onChange={handleChange}
-                                className="w-full bg-slate-950/50 border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-medium"
-                                required
-                            />
-                        </div>
-                    </div>
+
 
                     <div className="space-y-2">
                         <label className="text-sm font-medium text-slate-300 ml-1">Password</label>

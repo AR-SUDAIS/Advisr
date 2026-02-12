@@ -7,6 +7,7 @@ import Dashboard from './components/Dashboard';
 import Chatbot from './components/Chatbot';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
+import AcademicHistory from './components/AcademicHistory';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             </ProtectedRoute>
           }>
             <Route index element={<Dashboard />} />
+            <Route path="history" element={<AcademicHistory />} />
             <Route path="chat" element={<Chatbot />} />
           </Route>
         </Routes>
