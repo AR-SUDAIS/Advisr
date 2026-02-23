@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { BookOpen, TrendingUp, Award, Clock, Plus, CheckCircle, History, Sparkles, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
+import { calculateCGPA, calculateSGPA } from '../lib/calculations';
 import AddSubjectModal from './AddSubjectModal';
 import CompleteSemesterModal from './CompleteSemesterModal';
 
@@ -59,16 +60,34 @@ const Dashboard = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [subjects, setSubjects] = useState([]);
+    const [history, setHistory] = useState([]);
+    const [cgpa, setCgpa] = useState(0);
+    const [lastSemSgpa, setLastSemSgpa] = useState("N/A");
     const [loading, setLoading] = useState(true);
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
 
     const fetchSubjects = async () => {
         try {
-            const response = await api.get('/users/me/subjects');
-            setSubjects(response.data);
+            const [subjectsRes, historyRes] = await Promise.all([
+                api.get('/users/me/subjects'),
+                api.get('/users/me/history')
+            ]);
+            setSubjects(subjectsRes.data);
+            setHistory(historyRes.data);
+            setCgpa(calculateCGPA(historyRes.data));
+
+            // Calculate Last Sem SGPA
+            if (historyRes.data.length > 0) {
+                // Sort by semester number descending to find latest
+                const sortedHistory = [...historyRes.data].sort((a, b) => b.semester_number - a.semester_number);
+                const lastSem = sortedHistory[0];
+                setLastSemSgpa(calculateSGPA(lastSem.subjects));
+            } else {
+                setLastSemSgpa("N/A");
+            }
         } catch (error) {
-            console.error("Failed to fetch subjects", error);
+            console.error("Failed to fetch data", error);
         } finally {
             setLoading(false);
         }
@@ -107,7 +126,7 @@ const Dashboard = () => {
                 <StatCard
                     icon={TrendingUp}
                     label="CGPA"
-                    value="--.--"
+                    value={cgpa}
                     subtext="Update after semester"
                     color="bg-emerald-500"
                     iconColor="text-emerald-500"
@@ -130,9 +149,9 @@ const Dashboard = () => {
                 />
                 <StatCard
                     icon={Clock}
-                    label="Attendance"
-                    value="--%"
-                    subtext="Not tracked yet"
+                    label="Last SGPA"
+                    value={lastSemSgpa}
+                    subtext="Previous Semester"
                     color="bg-rose-500"
                     iconColor="text-rose-500"
                 />

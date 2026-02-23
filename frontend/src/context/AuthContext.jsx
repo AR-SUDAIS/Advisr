@@ -49,6 +49,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     const register = async (userData) => {
+        console.log("Register payload:", userData); 
         const response = await api.post('/register', userData);
         return response.data;
     };

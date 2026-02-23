@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../lib/api';
+import { calculateSGPA } from '../lib/calculations';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Book, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -78,9 +79,14 @@ const AcademicHistory = () => {
                         >
                             <div className="p-6 border-b border-slate-200 dark:border-navy-700/50 flex justify-between items-center bg-slate-50/50 dark:bg-navy-900/50">
                                 <h2 className="text-xl font-bold text-slate-900 dark:text-white">Semester {sem.semester_number}</h2>
-                                <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/20 text-sm font-medium">
-                                    <Award size={16} />
-                                    <span>Completed</span>
+                                <div className="flex items-center gap-4">
+                                    <div className="text-sm font-semibold text-slate-600 dark:text-slate-300">
+                                        SGPA: <span className="text-indigo-600 dark:text-cyan-400">{calculateSGPA(sem.subjects)}</span>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 bg-emerald-100 dark:bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-500/20 text-sm font-medium">
+                                        <Award size={16} />
+                                        <span>Completed</span>
+                                    </div>
                                 </div>
                             </div>
 
