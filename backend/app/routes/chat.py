@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from app.auth import get_current_user
 from app.models import ChatMessage, ChatResponse
-import requests
-import json
 import logging
+import os
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -11,19 +14,21 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-OLLAMA_API_URL = "http://localhost:11434/api/generate"
+# Configure Gemini
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+genai.configure(api_key=GEMINI_API_KEY)
+
 
 @router.post("/chat", response_model=ChatResponse)
 async def chat(message: ChatMessage, current_user: dict = Depends(get_current_user)):
     user_input = message.message
-    
+
     # Context Construction
     student_name = current_user.get('name', 'Student')
     current_sem = current_user.get('current_semester', 1)
     history = current_user.get('semesters', [])
-    
-    # Calculate basic stats for context
-    history_summary = ""
+
+    # Build academic history summary
     if history:
         history_summary = "Academic History:\n"
         for sem in history:
@@ -33,7 +38,7 @@ async def chat(message: ChatMessage, current_user: dict = Depends(get_current_us
     else:
         history_summary = "No completed semesters yet."
 
-    system_prompt = (
+    system_instruction = (
         f"You are the Student Advisor and Personal Mentor of {student_name}. "
         f"He is currently in semester {current_sem}. "
         f"Academic record (absolute truth): {history_summary}. "
@@ -67,29 +72,17 @@ async def chat(message: ChatMessage, current_user: dict = Depends(get_current_us
         "If information is missing or uncertain, clearly say you do not know."
     )
 
-    prompt = f"{system_prompt}\n\nStudent: {user_input}\nAdvisor:"
-
-    payload = {
-        "model": "gemma3:latest", 
-        "prompt": prompt,
-        "stream": False
-    }
-    
     try:
-        response = requests.post(OLLAMA_API_URL, json=payload)
-        
-        if response.status_code == 404:
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            system_instruction=system_instruction
+        )
+        response = model.generate_content(user_input)
+        bot_response = response.text
 
-             logger.warning("Model gemma:3 not found, trying gemma:2b")
-             payload["model"] = "gemma:2b"
-             response = requests.post(OLLAMA_API_URL, json=payload)
-
-        response.raise_for_status()
-        result = response.json()
-        bot_response = result.get("response", "I'm having trouble thinking right now.")
-        
         return {"response": bot_response}
 
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Ollama API Error: {e}")
-        return {"response": "I'm sorry, I'm currently unable to access."}
+    except Exception as e:
+        logger.error(f"Gemini API Error: {e}")
+        return {"response": "I'm sorry, I'm currently unable to respond. Please try again later."}
+
