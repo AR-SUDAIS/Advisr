@@ -3,6 +3,7 @@ from app.auth import get_current_user
 from app.models import ChatMessage, ChatResponse
 import logging
 import os
+import google
 import google.generativeai as genai
 from dotenv import load_dotenv
 
@@ -74,7 +75,7 @@ async def chat(message: ChatMessage, current_user: dict = Depends(get_current_us
 
     try:
         model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="gemini-2.5-flash",
             system_instruction=system_instruction
         )
         response = model.generate_content(user_input)

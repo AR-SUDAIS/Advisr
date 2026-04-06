@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, MessageSquare, GraduationCap, LogOut, Menu } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion } from 'framer-motion';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import ThemeToggle from './ThemeToggle';
 
 const SidebarItem = ({ icon: Icon, label, to, active }) => (

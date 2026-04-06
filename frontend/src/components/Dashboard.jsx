@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { motion } from 'framer-motion';
 import { BookOpen, TrendingUp, Award, Clock, Plus, CheckCircle, History, Sparkles, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
