@@ -10,14 +10,14 @@ origins = [
     "http://localhost:3000",
     "http://localhost:5173", # Vite default port
     "http://localhost:5174",
-    "advisr-mu.vercel.app" # Vite fallback port
+    "advisr-git-main-ar-sudais-projects.vercel.app" # Vite fallback port
 ]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*   "],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
